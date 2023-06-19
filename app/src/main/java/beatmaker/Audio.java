@@ -30,6 +30,11 @@ public class Audio extends JPanel{
         addButtons();
     }
 
+    /**
+     * This method uses the base that an Audio is a JPanel so it adds 
+     * the buttons to itself. In addition to the action listeners that
+     * these buttons corresponds to.
+     */
     private void addButtons(){
         JButton play = new JButton("PLAY", null);
         play.addActionListener(e -> play());
@@ -92,6 +97,10 @@ public class Audio extends JPanel{
         }
     }
 
+    /**
+     * This is a getter that gives the name of the audio file.
+     * @return the filename of the audio.
+     */
     public String getName(){
         return fileName;
     }
