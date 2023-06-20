@@ -12,6 +12,9 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.JSlider;
 
 /**
  * A class that holds data for a audio file and provides
@@ -22,6 +25,8 @@ public class Audio extends JPanel{
     private String fileName;
     private File audioFile;
     private Clip clip;
+    private int frame = 0;
+    private JSlider slider = null;
 
     public Audio(String fileName, File audioFile) {
         this.fileName = fileName;
@@ -34,7 +39,7 @@ public class Audio extends JPanel{
      * This method uses the base that an Audio is a JPanel so it adds 
      * the buttons to itself. In addition to the action listeners that
      * these buttons corresponds to.
-     */
+    */
     private void addButtons(){
         JButton play = new JButton("PLAY", null);
         play.addActionListener(e -> play());
@@ -44,11 +49,20 @@ public class Audio extends JPanel{
         resume.addActionListener(e-> resume());
         JButton add = new JButton("ADD", null);
         JLabel label = new JLabel(getName());
+        slider = new JSlider(0, frame,0);
+        slider.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                clip.setFramePosition(slider.getValue());
+            }
+            
+        }); // this method will move the position in the the audio by the slider value
         this.add(play);
         this.add(stop);
         this.add(resume);
         this.add(add);
         this.add(label);
+        this.add(slider);
     }
 
     /**
@@ -59,6 +73,9 @@ public class Audio extends JPanel{
         if(clip == null) init();
         clip.setMicrosecondPosition(0);
         clip.start();
+        while(clip.isRunning()){
+            slider.setValue(clip.getFramePosition());
+        }
     }
 
     /**
@@ -88,6 +105,7 @@ public class Audio extends JPanel{
             AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
             this.clip = AudioSystem.getClip();
             clip.open(audioStream);
+            slider.setMaximum(clip.getFrameLength());
         }catch(UnsupportedAudioFileException audioE){
             System.out.println("Audio Not Supported!");
         }catch(IOException ioE){
