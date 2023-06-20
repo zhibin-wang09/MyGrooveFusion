@@ -1,5 +1,7 @@
 package beatmaker;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.WindowConstants;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -22,9 +24,9 @@ public class UI {
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE); // change default behavior to exit on close
         frame.setResizable(false);
         frame.setSize(900,600);
+        frame.setLocationRelativeTo(null);
         frame.setIconImage(new ImageIcon("../resources/images/beats.png").getImage());
         rootPane = frame.getContentPane();
-        rootPane.setLayout(new BoxLayout(rootPane, BoxLayout.Y_AXIS)); // change to vertical box layout 
         beatPlayer = new BeatPlayer();
     }
 
@@ -42,8 +44,13 @@ public class UI {
      * add the panels into the frame.
     */
     private void addPanels(){
+        JPanel base = new JPanel();
         for(Audio audio : beatPlayer.getAudios()){ // for every audio that exist create a panel
-            rootPane.add(audio); // root pane add instead of JFrame
+            base.add(audio); // root pane add instead of JFrame
         }
+
+        base.setLayout(new BoxLayout(base, BoxLayout.Y_AXIS)); // the base will display the panels
+        JScrollPane scroller = new JScrollPane(base,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED); // add a scroll bar to the base
+        rootPane.add(scroller);
     }
 }
