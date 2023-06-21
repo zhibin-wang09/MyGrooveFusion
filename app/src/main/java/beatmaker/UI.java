@@ -1,10 +1,13 @@
 package beatmaker;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.WindowConstants;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
+
 import java.awt.Container;
 
 /**
@@ -45,12 +48,22 @@ public class UI {
     */
     private void addPanels(){
         JPanel base = new JPanel();
+        base.setLayout(new BoxLayout(base, BoxLayout.Y_AXIS));
+
+        JPanel libraryBase = new JPanel();
         for(Audio audio : beatPlayer.getAudios()){ // for every audio that exist create a panel
-            base.add(audio); // root pane add instead of JFrame
+            libraryBase.add(audio); // root pane add instead of JFrame
         }
 
-        base.setLayout(new BoxLayout(base, BoxLayout.Y_AXIS)); // the base will display the panels
-        JScrollPane scroller = new JScrollPane(base,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED); // add a scroll bar to the base
-        rootPane.add(scroller);
+        libraryBase.setLayout(new BoxLayout(libraryBase, BoxLayout.Y_AXIS)); // the libraryBase will display the panels
+        JScrollPane scroller = new JScrollPane(libraryBase,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED); // add a scroll bar to the base
+        base.add(scroller);
+
+        JPanel product = new JPanel();
+        JLabel productName = new JLabel("Result Beat");
+        product.add(new JButton("Upload"));
+        product.add(productName);
+        base.add(product);
+        rootPane.add(base);
     }
 }
