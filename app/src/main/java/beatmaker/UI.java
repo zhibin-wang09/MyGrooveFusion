@@ -61,7 +61,18 @@ public class UI {
 
         JPanel product = new JPanel();
         JLabel productName = new JLabel("Result Beat");
-        product.add(new JButton("Upload"));
+        JButton clear = new JButton("Clear");
+        clear.addActionListener(e -> BeatPlayer.clear());
+
+        JButton upload = new JButton("Upload");
+
+
+        JButton done = new JButton("Done");
+        done.addActionListener(e -> BeatPlayer.joinClips());
+
+        product.add(clear);
+        product.add(upload);
+        product.add(done);
         product.add(productName);
         base.add(product);
         rootPane.add(base);
