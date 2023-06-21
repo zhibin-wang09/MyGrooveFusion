@@ -7,6 +7,8 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.AudioFileFormat;
+import javax.sound.sampled.AudioFormat;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -27,6 +29,7 @@ public class Audio extends JPanel{
     private Clip clip;
     private int frame = 0;
     private JSlider slider = null;
+    private AudioInputStream audioStream;
 
     public Audio(String fileName, File audioFile) {
         this.fileName = fileName;
@@ -48,6 +51,7 @@ public class Audio extends JPanel{
         JButton resume = new JButton("RESUME", null);
         resume.addActionListener(e-> resume());
         JButton add = new JButton("ADD", null);
+        add.addActionListener(e -> transferRange());
         JLabel label = new JLabel(getName());
         slider = new JSlider(0, frame,0);
         slider.addChangeListener(new ChangeListener() {
@@ -66,23 +70,39 @@ public class Audio extends JPanel{
     }
 
     /**
+     * This method is activated upon user clicking the ADD button to set a range
+     * then transfer this range of bytes to the output audio.
+     */
+    private void transferRange(){
+        if(clip == null || !clip.isOpen()) return;
+
+        AudioFormat format = null;
+
+        try{
+            AudioFileFormat fileFormat = AudioSystem.getAudioFileFormat(audioFile);
+            format = fileFormat.getFormat();
+        }catch(Exception e){
+            System.out.println(e);
+        }
+
+        BeatPlayer.copyAudio(audioStream, format, slider.getValue(), clip.getFramePosition() - slider.getValue());
+    }
+
+    /**
      * This method will initialize the clip of audio if it hasn't already and play. If the
      * audio is already playing and upon activation of method again it will restart the audio.
      */
     public void play(){
-        if(clip == null) init();
+        if(clip == null || !clip.isOpen()) init();
         clip.setMicrosecondPosition(0);
         clip.start();
-        while(clip.isRunning()){
-            slider.setValue(clip.getFramePosition());
-        }
     }
 
     /**
      * This method simply re-start the audio from where it left off.
      */
     public void resume(){
-        if(clip == null) init();
+        if(clip == null || !clip.isOpen()) init();
         clip.start();
     }
 
@@ -90,7 +110,7 @@ public class Audio extends JPanel{
      * This method simply stops the audio.
      */
     public void stop(){
-        if(clip == null) init();
+        if(clip == null || !clip.isOpen()) init();
         clip.stop();
     }
 
@@ -102,7 +122,7 @@ public class Audio extends JPanel{
      */
     private void init(){
         try{
-            AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
+            audioStream = AudioSystem.getAudioInputStream(audioFile);
             this.clip = AudioSystem.getClip();
             clip.open(audioStream);
             slider.setMaximum(clip.getFrameLength());
