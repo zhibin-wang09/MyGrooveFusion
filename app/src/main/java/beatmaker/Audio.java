@@ -7,8 +7,6 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.AudioFileFormat;
-import javax.sound.sampled.AudioFormat;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -57,6 +55,7 @@ public class Audio extends JPanel{
         slider.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
+                if(clip == null) return;
                 clip.setFramePosition(slider.getValue());
             }
             
@@ -76,16 +75,7 @@ public class Audio extends JPanel{
     private void transferRange(){
         if(clip == null || !clip.isOpen()) return;
 
-        AudioFormat format = null;
-
-        try{
-            AudioFileFormat fileFormat = AudioSystem.getAudioFileFormat(audioFile);
-            format = fileFormat.getFormat();
-        }catch(Exception e){
-            System.out.println(e);
-        }
-
-        BeatPlayer.copyAudio(audioStream, format, slider.getValue(), clip.getFramePosition() - slider.getValue());
+        BeatPlayer.copyAudio(audioFile.getPath(),(long)slider.getValue(), clip.getLongFramePosition() - slider.getValue());
     }
 
     /**
