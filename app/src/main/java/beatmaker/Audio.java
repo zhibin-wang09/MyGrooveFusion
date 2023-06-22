@@ -1,4 +1,5 @@
 package beatmaker;
+import java.awt.Insets;
 import java.io.File;
 import java.io.IOException;
 
@@ -7,7 +8,7 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
-
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -42,14 +43,30 @@ public class Audio extends JPanel{
      * these buttons corresponds to.
     */
     private void addButtons(){
-        JButton play = new JButton("PLAY", null);
+        /* <a href="https://www.flaticon.com/free-icons/play-button" title="play button icons">Play button icons created by Freepik - Flaticon</a> */
+        JButton play = new JButton(new ImageIcon("./app/src/main/resources/images/play-button.png"));
+        play.setBorder(null);
+        play.setMargin(new Insets(10, 20, 10, 20));
         play.addActionListener(e -> play());
-        JButton stop = new JButton("STOP", null);
+
+        /* <a href="https://www.flaticon.com/free-icons/pause-button" title="pause button icons">Pause button icons created by Icon Hubs - Flaticon</a> */
+        JButton stop = new JButton(new ImageIcon("./app/src/main/resources/images/pause-button.png"));
+        stop.setBorder(null);
+        stop.setMargin(new Insets(10, 20, 10, 20));
         stop.addActionListener(e -> stop());
-        JButton resume = new JButton("RESUME", null);
+
+        /* <a href="https://www.flaticon.com/free-icons/end" title="end icons">End icons created by Icon.doit - Flaticon</a> */
+        JButton resume = new JButton(new ImageIcon("./app/src/main/resources/images/resume-button.png"));
+        resume.setBorder(null);
+        stop.setMargin(new Insets(10, 20, 10, 20));
         resume.addActionListener(e-> resume());
-        JButton add = new JButton("ADD", null);
+
+        /* <a href="https://www.flaticon.com/free-icons/more" title="more icons">More icons created by Pixel perfect - Flaticon</a> */
+        JButton add = new JButton(new ImageIcon("./app/src/main/resources/images/add-button.png"));
+        add.setBorder(null);
+        add.setMargin(new Insets(10, 20, 10, 20));
         add.addActionListener(e -> transferRange());
+
         JLabel label = new JLabel(getName());
         slider = new JSlider(0, frame,0);
         slider.addChangeListener(new ChangeListener() {
