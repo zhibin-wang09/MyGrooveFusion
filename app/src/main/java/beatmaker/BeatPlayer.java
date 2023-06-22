@@ -52,33 +52,43 @@ public class BeatPlayer extends JPanel{
      * @param secondsToCopy the amount of time to transfer since <code>startFrame</code>
      */
     public static void copyAudio(String sourceFileName, long startFrame, long framesToCopy){
-        AudioInputStream inputStream = null;
-        AudioInputStream shortenedStream = null;
+        AudioInputStream inputStream = null; // the source stream
+        AudioInputStream shortenedStream = null; // the small chunk of beat
         try {
-        File file = new File(sourceFileName);
-        AudioFileFormat fileFormat = AudioSystem.getAudioFileFormat(file);
-        AudioFormat format = fileFormat.getFormat();
-        inputStream = AudioSystem.getAudioInputStream(file);
-        inputStream.skip(startFrame);
-        long framesOfAudioToCopy = framesToCopy;
-        shortenedStream = new AudioInputStream(inputStream, format, framesOfAudioToCopy);
+            /* open file instead of reusing audioInputStream from Audio because they have different pointers. */
+            File file = new File(sourceFileName);
+            AudioFileFormat fileFormat = AudioSystem.getAudioFileFormat(file);
+            AudioFormat format = fileFormat.getFormat();
+
+            /* get another instance of AudioInputStream */
+            inputStream = AudioSystem.getAudioInputStream(file);
+            inputStream.skip(startFrame); // skip to the startFrame byte
+            long framesOfAudioToCopy = framesToCopy; // num frames to copy
+            shortenedStream = new AudioInputStream(inputStream, format, framesOfAudioToCopy); // new stream that has the small chunk of beat
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println(e.getStackTrace());
         }
+
         if(inputStream != null) System.out.println("original length: " + (long)(inputStream.getFrameLength()));
         if(shortenedStream!=null) System.out.println("clip length: " + (long) shortenedStream.getFrameLength());
-        clips.add(shortenedStream);
+        clips.add(shortenedStream); // add into the list of beats that are going to be concatenated
 
         System.out.println();
     }
 
     /**
      * This function suppress resouce because <code>clip</code> can not be closed due to closing a sequence input stream closes all its underlying streams, 
-     * and closing audio input streams closes its underlying steam as well. 
+     * and closing audio input streams closes its underlying steam as well. This function goes over all the added clips and concatenate these clips
+     * into a new beat then convert it to a new file stored in resrouces/production.
+     * 
+     * @param destination: the calling method need to specify where to store this file.
+     * @return the status of the function
      */
     @SuppressWarnings("resource")
-    public static void joinClips(){
-        AudioInputStream prev = null;
+    public static boolean joinClips(String destination){
+        AudioInputStream prev = null; // previous beat
+
+        /* for every beat in clips concatenate them */
         for(AudioInputStream clip : clips){
             if(prev == null){
                 prev = clip;
@@ -86,12 +96,13 @@ public class BeatPlayer extends JPanel{
             }
             AudioInputStream concat = new AudioInputStream(new SequenceInputStream(prev, clip),prev.getFormat(),prev.getFrameLength() + clip.getFrameLength());
             prev = concat;
-            System.out.println(prev.getFrameLength());
         }
         try{
-            AudioSystem.write(prev, AudioFileFormat.Type.WAVE, new File("production.wav"));
+            AudioSystem.write(prev, AudioFileFormat.Type.WAVE, new File(destination)); // create new file of the final product beat
+            return true;
         }catch(IOException e){
             System.out.println(e);
+            return false;
         }
     }
 
