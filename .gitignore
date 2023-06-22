@@ -3,3 +3,8 @@
 
 # Ignore Gradle build output directory
 build
+
+#ignore all the compiled class files
+*.class
+
+*.DS_Store
