@@ -10,9 +10,7 @@ I do not own the rights to these audios. All the copyrights belong to the owner 
 can be found at [noiiz.com](www.noiiz.com).
 
 ### Why I created this project
-I listen and enjoy music every single day, mostly Hip Hop and R&B. I watched a video about one of the producer that I liked, so I wanted
-to explore a little bit more about the music side of programming. This project is a way for me to explore different fields that I'm interested in
-(in this case, programming and music).
+I listen to and enjoy music every single day, mostly Hip Hop and R&B. I watched a video about one of the producers that I liked, so I wanted to explore a little bit more about the music side of programming. This project is a way for me to explore different fields that I'm interested in (in this case, programming and music).
 
 ## Some Snapshots of the program
 
