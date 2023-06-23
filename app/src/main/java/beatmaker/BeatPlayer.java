@@ -1,5 +1,7 @@
 package beatmaker;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JPanel;
 
@@ -17,8 +19,8 @@ import javax.sound.sampled.AudioSystem;
  */
 public class BeatPlayer extends JPanel{
 
-    private ArrayList<Audio> audios; // stores all the audios
-    final File audioFolder = new File("./app/src/main/resources/audios"); // open the directory of audio files
+    private HashMap<String, Library> libraries; // stores all the libraries
+    final File libraryFolder = new File("./app/src/main/resources/audios"); // open the directory of audio files
     public static ArrayList<AudioInputStream> clips; // the clips that are going to be concatenated.
     
     /**
@@ -26,20 +28,16 @@ public class BeatPlayer extends JPanel{
      * Audio object and store them into a list.
      */
     public BeatPlayer(){
-        audios = new ArrayList<>();
-        for(final File audioFile : audioFolder.listFiles()){ // explore the directory then add all the audio files
-            Audio audio = new Audio(audioFile.getName(),audioFile);
-            audios.add(audio);
+        libraries = new HashMap<>();
+        for(final File library : libraryFolder.listFiles()){ // explore the directory then add all the audio files in every library
+            Library lib = new Library(library.getName());
+            for(final File audioFile : library.listFiles()){
+                lib.addAudio(new Audio(audioFile.getName(),audioFile));
+            }
+            lib.createPanel();
+            libraries.put(library.getName(), lib);
         }
         clips = new ArrayList<>();
-    }
-
-    /**
-     * This function returns all the audios on record
-     * @return a list of all the audios
-     */
-    public ArrayList<Audio> getAudios(){
-        return this.audios;
     }
 
     /**
@@ -108,5 +106,13 @@ public class BeatPlayer extends JPanel{
 
     public static void clear(){
         clips = new ArrayList<>();
+    }
+
+    public ArrayList<Library> getLibraries(){
+        ArrayList<Library> listOfLib = new ArrayList<>();
+        for(Map.Entry<String, Library> e : libraries.entrySet()){
+            listOfLib.add(e.getValue());
+        }
+        return listOfLib;
     }
 }
