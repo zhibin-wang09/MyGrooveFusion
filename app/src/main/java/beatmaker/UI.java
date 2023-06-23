@@ -1,9 +1,11 @@
 package beatmaker;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.WindowConstants;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.BoxLayout;
@@ -11,8 +13,9 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 
-import java.awt.Component;
 import java.awt.Container;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * A class to manipulate the UI for the beat maker application
@@ -21,13 +24,13 @@ public class UI {
     private JFrame frame; // the base frame that the program uses
     private BeatPlayer beatPlayer; // the music player that the program will be interacting with
     private Container rootPane;
-
+    private JPanel base;
     
     /**
      * This constructor sets the default setting of the <code>frame</code>
     */
     public UI(){
-        frame = new JFrame("Beat Maker");
+        frame = new JFrame("Groove Fusion");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE); // change default behavior to exit on close
         frame.setResizable(false);
         frame.setSize(900,600);
@@ -52,21 +55,19 @@ public class UI {
      * add the panels into the frame.
     */
     private void addPanels(){
-        JPanel base = new JPanel();
+        base = new JPanel();
         base.setLayout(new BoxLayout(base, BoxLayout.Y_AXIS));
 
-        JPanel libraryBase = new JPanel();
-        for(Audio audio : beatPlayer.getAudios()){ // for every audio that exist create a panel
-            libraryBase.add(audio); // root pane add instead of JFrame
-            audio.setAlignmentX(Component.LEFT_ALIGNMENT);
-        }
+        JButton info = new JButton( new ImageIcon("./app/src/main/resources/images/information.png"));
+        info.addActionListener(e -> showGuide());
+        base.add(info);
+        base.add(new JPanel()); // place holder
 
-        libraryBase.setLayout(new BoxLayout(libraryBase, BoxLayout.Y_AXIS)); // the libraryBase will display the panels
-        JScrollPane scroller = new JScrollPane(libraryBase,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED); // add a scroll bar to the base
-        base.add(scroller);
+        /* Add the the libraries to menubar then upon click on a specific library display library panel */
+        frame.setJMenuBar(initMenu());
 
         JPanel product = new JPanel();
-        JLabel productName = new JLabel("Result Beat");
+        JLabel productName = new JLabel("Production Beat");
         JButton clear = new JButton("Clear");
         clear.addActionListener(e -> BeatPlayer.clear());
 
@@ -84,6 +85,55 @@ public class UI {
         rootPane.add(base);
     }
 
+    /**
+     * Action to be implemented by the menu selection
+     */
+    private class MenuAction implements ActionListener{
+        private JPanel pane;
+        public MenuAction(JPanel pane){
+            this.pane = pane;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            changeLibraryPanel(pane);
+        }
+        
+    }
+
+    /**
+     * Action lister that changes the content displayed on the UI
+     * @param pane: The panel that contains list of audios to be displayed upon user selecting a specific audio library
+     */
+    private void changeLibraryPanel(JPanel pane){
+        base.remove(1); // remove the content page
+        base.add(pane, 1); // Update the content pane with the library pane
+        base.validate();
+        base.repaint();
+    }
+
+    /**
+     * This function transfers all the libraries that exists into menu items.
+     * Each item in the menu upon clicked will change the content the the UI to the
+     * audios in that specific library.
+     * 
+     * @return the menu bar component
+     */
+    public JMenuBar initMenu(){
+        JMenuBar menuBar = new JMenuBar();
+        JMenu librarySelection = new JMenu("Library");
+        for(Library lib : beatPlayer.getLibraries()){
+            JMenuItem item = new JMenuItem(lib.getName());
+            item.addActionListener(new MenuAction(lib));
+            librarySelection.add(item);
+        }
+        menuBar.add(librarySelection);
+        return menuBar;
+    }
+
+    /**
+     * This function will prompt the user to choose the name of the production .wav file name and save location
+     */
     public void produce(){
         JFileChooser fileChooser = new JFileChooser("./app/src/main/resources/production");
         fileChooser.setFileFilter(new FileNameExtensionFilter("WAVE FILES", "wav", "wave"));
@@ -96,6 +146,9 @@ public class UI {
         }
     }
 
+    /**
+     * This function will display a guide upon opening the program
+     */
     public void showGuide(){
         /* <a href="https://www.flaticon.com/free-icons/midi" title="midi icons">Midi icons created by Freepik - Flaticon</a> */
         JOptionPane.showMessageDialog(null, 
