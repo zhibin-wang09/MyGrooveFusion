@@ -30,6 +30,7 @@ public class BeatPlayer extends JPanel{
     public BeatPlayer(){
         libraries = new HashMap<>();
         for(final File library : libraryFolder.listFiles()){ // explore the directory then add all the audio files in every library
+            if(library.getName().equals(".DS_Store")) continue;
             Library lib = new Library(library.getName());
             for(final File audioFile : library.listFiles()){
                 lib.addAudio(new Audio(audioFile.getName(),audioFile));
