@@ -11,8 +11,10 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -106,6 +108,12 @@ public class UI {
      * @param pane: The panel that contains list of audios to be displayed upon user selecting a specific audio library
      */
     private void changeLibraryPanel(JPanel pane){
+        Component content = base.getComponent(1);
+        if(content instanceof Library){
+            for(Audio a : ((Library) content).getAudios()){
+                a.close(); // close any opened resources if the library is about be to switched.
+            }
+        }
         base.remove(1); // remove the content page
         base.add(pane, 1); // Update the content pane with the library pane
         base.validate();
