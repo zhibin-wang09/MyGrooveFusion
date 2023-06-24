@@ -11,6 +11,7 @@ import javax.sound.sampled.AudioSystem;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
@@ -26,7 +27,6 @@ public class Audio extends JPanel{
     private String fileName;
     private File audioFile;
     private Clip clip;
-    private int frame = 0;
     private JSlider slider = null;
     private AudioInputStream audioStream;
 
@@ -68,7 +68,7 @@ public class Audio extends JPanel{
         add.addActionListener(e -> transferRange());
 
         JLabel label = new JLabel(getName());
-        slider = new JSlider(0, frame,0);
+        slider = new JSlider(0, 0,0);
         slider.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
@@ -91,7 +91,11 @@ public class Audio extends JPanel{
      */
     private void transferRange(){
         if(clip == null || !clip.isOpen()) return;
-
+        if(slider.getValue() > clip.getLongFramePosition()){ // in case that use has slider set to the end and start from beginning and try to add the sound.
+            JOptionPane.showMessageDialog(null, """
+                    Please reset the slider so that the clip starts at the slider and hit resume :)
+                    """, "alert",JOptionPane.ERROR_MESSAGE);
+        }
         BeatPlayer.copyAudio(audioFile.getPath(),(long)slider.getValue(), clip.getLongFramePosition() - slider.getValue());
     }
 
@@ -133,6 +137,8 @@ public class Audio extends JPanel{
             this.clip = AudioSystem.getClip();
             clip.open(audioStream);
             slider.setMaximum(clip.getFrameLength());
+            System.out.println("slider value: " +slider.getMaximum());
+            System.out.println("clip value: " + clip.getFrameLength());
         }catch(UnsupportedAudioFileException audioE){
             System.out.println("Audio Not Supported!");
         }catch(IOException ioE){
@@ -148,5 +154,10 @@ public class Audio extends JPanel{
      */
     public String getName(){
         return fileName;
+    }
+
+    public void close(){
+        if(clip == null) return;
+        if(clip.isOpen()) clip.close();
     }
 }
