@@ -22,6 +22,11 @@ public class BeatPlayer extends JPanel{
     private HashMap<String, Library> libraries; // stores all the libraries
     final File libraryFolder = new File("./app/src/main/resources/audios"); // open the directory of audio files
     public static ArrayList<AudioInputStream> clips; // the clips that are going to be concatenated.
+    /* Perhaps that inside the clips array, I can have a list of audios but each one tagged with a different purpose
+     * for instance, [audio_1, audio_2,audio3,audio_4] audio_1 and audio_2 are tagged with concat meaning audio_2 is to concat
+     * with audio_1. But audio_3 is tagged merge, that means audio_3 is going to be merged with the result of audio_1 and audio_2. Lastly,
+     * audio_4 is tagged merge as well, then it will merge with the result of all previous audios.
+     */
     
     /**
      * Visit the directory that holds all the audio files then convert them into a 

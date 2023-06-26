@@ -11,7 +11,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 
 import java.awt.Component;
