@@ -126,7 +126,7 @@ public class UI {
      * 
      * @return the menu bar component
      */
-    public JMenuBar initMenu(){
+    private JMenuBar initMenu(){
         JMenuBar menuBar = new JMenuBar();
         JMenu librarySelection = new JMenu("Library");
         for(Library lib : beatPlayer.getLibraries()){
@@ -141,7 +141,7 @@ public class UI {
     /**
      * This function will prompt the user to choose the name of the production .wav file name and save location
      */
-    public void produce(){
+    private void produce(){
         JFileChooser fileChooser = new JFileChooser("./app/src/main/resources/production");
         fileChooser.setFileFilter(new FileNameExtensionFilter("WAVE FILES", "wav", "wave"));
         int response = fileChooser.showSaveDialog(null);
@@ -156,7 +156,7 @@ public class UI {
     /**
      * This function will display a guide upon opening the program
      */
-    public void showGuide(){
+    private void showGuide(){
         /* <a href="https://www.flaticon.com/free-icons/midi" title="midi icons">Midi icons created by Freepik - Flaticon</a> */
         JOptionPane.showMessageDialog(null, 
          """

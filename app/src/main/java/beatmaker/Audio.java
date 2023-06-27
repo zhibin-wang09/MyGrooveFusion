@@ -65,7 +65,7 @@ public class Audio extends JPanel{
         JButton add = new JButton(new ImageIcon("./app/src/main/resources/images/add-button.png"));
         add.setBorder(null);
         add.setMargin(new Insets(10, 20, 10, 20));
-        add.addActionListener(e -> transferRange());
+        add.addActionListener(e -> transferRange(Purpose.CONCAT));
 
         JLabel label = new JLabel(getName());
         slider = new JSlider(0, 0,0);
@@ -88,15 +88,17 @@ public class Audio extends JPanel{
     /**
      * This method is activated upon user clicking the ADD button to set a range
      * then transfer this range of bytes to the output audio.
+     * 
+     * @param p: this is to indicate the purpose of this clip.
      */
-    private void transferRange(){
+    private void transferRange(Purpose p){
         if(clip == null || !clip.isOpen()) return;
         if(slider.getValue() > clip.getLongFramePosition()){ // in case that use has slider set to the end and start from beginning and try to add the sound.
             JOptionPane.showMessageDialog(null, """
                     Please reset the slider so that the clip starts at the slider and hit resume :)
                     """, "alert",JOptionPane.ERROR_MESSAGE);
         }
-        BeatPlayer.copyAudio(audioFile.getPath(),(long)slider.getValue(), clip.getLongFramePosition() - slider.getValue());
+        BeatPlayer.copyAudio(audioFile.getPath(),(long)slider.getValue(), clip.getLongFramePosition() - slider.getValue(),p);
     }
 
     /**

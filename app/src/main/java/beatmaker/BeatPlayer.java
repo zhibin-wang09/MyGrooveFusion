@@ -21,7 +21,7 @@ public class BeatPlayer extends JPanel{
 
     private HashMap<String, Library> libraries; // stores all the libraries
     final File libraryFolder = new File("./app/src/main/resources/audios"); // open the directory of audio files
-    public static ArrayList<AudioInputStream> clips; // the clips that are going to be concatenated.
+    public static HashMap<AudioInputStream, Purpose> clips; // the clips that are going to be concatenated.
     /* Perhaps that inside the clips array, I can have a list of audios but each one tagged with a different purpose
      * for instance, [audio_1, audio_2,audio3,audio_4] audio_1 and audio_2 are tagged with concat meaning audio_2 is to concat
      * with audio_1. But audio_3 is tagged merge, that means audio_3 is going to be merged with the result of audio_1 and audio_2. Lastly,
@@ -43,7 +43,7 @@ public class BeatPlayer extends JPanel{
             lib.createPanel();
             libraries.put(library.getName(), lib);
         }
-        clips = new ArrayList<>();
+        clips = new HashMap<>();
     }
 
     /**
@@ -55,7 +55,7 @@ public class BeatPlayer extends JPanel{
      * @param startFrame the start position
      * @param secondsToCopy the amount of time to transfer since <code>startFrame</code>
      */
-    public static void copyAudio(String sourceFileName, long startFrame, long framesToCopy){
+    public static void copyAudio(String sourceFileName, long startFrame, long framesToCopy, Purpose p){
         AudioInputStream inputStream = null; // the source stream
         AudioInputStream shortenedStream = null; // the small chunk of beat
         try {
@@ -75,7 +75,7 @@ public class BeatPlayer extends JPanel{
 
         if(inputStream != null) System.out.println("original length: " + (long)(inputStream.getFrameLength()));
         if(shortenedStream!=null) System.out.println("clip length: " + (long) shortenedStream.getFrameLength());
-        clips.add(shortenedStream); // add into the list of beats that are going to be concatenated
+        clips.put(shortenedStream,p); // add into the list of beats that are going to be concatenated
 
         System.out.println();
     }
@@ -93,14 +93,21 @@ public class BeatPlayer extends JPanel{
         AudioInputStream prev = null; // previous beat
 
         /* for every beat in clips concatenate them */
-        for(AudioInputStream clip : clips){
+        for(Map.Entry<AudioInputStream, Purpose> set : clips.entrySet()){
             if(prev == null){
-                prev = clip;
+                prev = set.getKey();
                 continue;
             }
-            AudioInputStream concat = new AudioInputStream(new SequenceInputStream(prev, clip),prev.getFormat(),prev.getFrameLength() + clip.getFrameLength());
-            prev = concat;
+            switch(set.getValue()){
+                case CONCAT:
+                    prev = concatClips(prev, set.getKey());
+                    break;
+                case MERGE:
+                    prev = mergeClips(prev, set.getKey());
+                    break;
+            }
         }
+
         try{
             AudioSystem.write(prev, AudioFileFormat.Type.WAVE, new File(destination)); // create new file of the final product beat
             return true;
@@ -111,7 +118,7 @@ public class BeatPlayer extends JPanel{
     }
 
     public static void clear(){
-        clips = new ArrayList<>();
+        clips.clear();
     }
 
     public ArrayList<Library> getLibraries(){
@@ -121,4 +128,36 @@ public class BeatPlayer extends JPanel{
         }
         return listOfLib;
     }
+
+    /**
+     * This function will take two audio clips then concat them to form a longer joined clip
+     * @param prev First clip that wish to be joined
+     * @param current Second clip that wish to be joined
+     * @return The joined clip
+     */
+    public static AudioInputStream concatClips(AudioInputStream prev, AudioInputStream current){
+        AudioInputStream concat = new AudioInputStream(new SequenceInputStream(prev, current),prev.getFormat(),prev.getFrameLength() + current.getFrameLength());
+        return concat;
+    }
+
+    /**
+     * This function will accept two audio clips then merge then in parallel so that both clips 
+     * play at the same time 
+     * @param prev First clip that wish to be merged
+     * @param current Second clip that wis hto be merged
+     * @return The merged clip
+     */
+    public static AudioInputStream mergeClips(AudioInputStream prev, AudioInputStream current){
+        AudioInputStream result = null;
+        /**
+         * First trasnform both clips into a byte array
+         * 
+         * Add the two byte arrays up, after modifying the header if two clips are of different length
+         * 
+         * Convert the result into an audioInputStream then return
+         */
+        
+        return result;
+    }
+
 }
