@@ -8,12 +8,12 @@ import javax.swing.JScrollPane;
 
 /**
  * This is the class that keeps all the audio of a related category together.
- * This is a JPanel that can be selected by the base UI to display all of audio
+ * This is a JPanel that can be selected by the base UI to display all audios
  * inside this library.
  */
 public class Library extends JPanel{
-    private ArrayList<Audio> audios; // library holds audios of similar category
-    private String name;
+    private final ArrayList<Audio> audios; // library holds audios of similar category
+    private final String name;
 
     public Library(String name){
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));  // a box layout is used for the audios 
@@ -38,7 +38,7 @@ public class Library extends JPanel{
 
     /**
      * This function returns all the audios that the library currently have
-     * @return an list of audios
+     * @return a list of audios
      */
     public ArrayList<Audio> getAudios(){
         return this.audios;

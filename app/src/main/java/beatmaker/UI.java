@@ -22,9 +22,9 @@ import java.awt.event.ActionListener;
  * A class to manipulate the UI for the beat maker application
 */
 public class UI {
-    private JFrame frame; // the base frame that the program uses
-    private BeatPlayer beatPlayer; // the music player that the program will be interacting with
-    private Container rootPane;
+    private final JFrame frame; // the base frame that the program uses
+    private final BeatPlayer beatPlayer; // the music player that the program will be interacting with
+    private final Container rootPane;
     private JPanel base;
     
     /**
@@ -64,7 +64,7 @@ public class UI {
         base.add(info);
         base.add(new JPanel()); // place holder
 
-        /* Add the the libraries to menubar then upon click on a specific library display library panel */
+        /* Add the libraries to menu bar then upon click on a specific library display library panel */
         frame.setJMenuBar(initMenu());
 
         JPanel product = new JPanel();
@@ -90,7 +90,7 @@ public class UI {
      * Action to be implemented by the menu selection
      */
     private class MenuAction implements ActionListener{
-        private JPanel pane;
+        private final JPanel pane;
         public MenuAction(JPanel pane){
             this.pane = pane;
         }

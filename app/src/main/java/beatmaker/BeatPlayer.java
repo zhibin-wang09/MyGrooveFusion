@@ -19,7 +19,7 @@ import javax.sound.sampled.AudioSystem;
  */
 public class BeatPlayer extends JPanel{
 
-    private HashMap<String, Library> libraries; // stores all the libraries
+    private final HashMap<String, Library> libraries; // stores all the libraries
     final File libraryFolder = new File("./app/src/main/resources/audios"); // open the directory of audio files
     public static ArrayList<AudioInputStream> clips; // the clips that are going to be concatenated.
     /* Perhaps that inside the clips array, I can have a list of audios but each one tagged with a different purpose
@@ -47,13 +47,12 @@ public class BeatPlayer extends JPanel{
     }
 
     /**
-     * This function will create copy the audioFile[startframe, endFrame] and store it
+     * This function will create copy the audioFile[startFrame, endFrame] and store it
      * in <code>clips</code> Then it will be concatenated after all the desired beats are added.
      * 
-     * @param sourceAudioFile the audio to copy from  
-     * @param format used to create the range clip with the original format
+     * @param sourceFileName the audio to copy from
      * @param startFrame the start position
-     * @param secondsToCopy the amount of time to transfer since <code>startFrame</code>
+     * @param framesToCopy the amount of time to transfer since <code>startFrame</code>
      */
     public static void copyAudio(String sourceFileName, long startFrame, long framesToCopy){
         AudioInputStream inputStream = null; // the source stream
@@ -81,9 +80,9 @@ public class BeatPlayer extends JPanel{
     }
 
     /**
-     * This function suppress resouce because <code>clip</code> can not be closed due to closing a sequence input stream closes all its underlying streams, 
+     * This function suppress resource because <code>clip</code> can not be closed due to closing a sequence input stream closes all its underlying streams,
      * and closing audio input streams closes its underlying steam as well. This function goes over all the added clips and concatenate these clips
-     * into a new beat then convert it to a new file stored in resrouces/production.
+     * into a new beat then convert it to a new file stored in resources/production.
      * 
      * @param destination: the calling method need to specify where to store this file.
      * @return the status of the function
@@ -98,8 +97,7 @@ public class BeatPlayer extends JPanel{
                 prev = clip;
                 continue;
             }
-            AudioInputStream concat = new AudioInputStream(new SequenceInputStream(prev, clip),prev.getFormat(),prev.getFrameLength() + clip.getFrameLength());
-            prev = concat;
+            prev = new AudioInputStream(new SequenceInputStream(prev, clip),prev.getFormat(),prev.getFrameLength() + clip.getFrameLength());
         }
         try{
             AudioSystem.write(prev, AudioFileFormat.Type.WAVE, new File(destination)); // create new file of the final product beat

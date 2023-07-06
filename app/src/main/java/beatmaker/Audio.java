@@ -24,11 +24,10 @@ import javax.swing.JSlider;
  */
 public class Audio extends JPanel{
     //private byte[] data;
-    private String fileName;
-    private File audioFile;
+    private final String fileName;
+    private final File audioFile;
     private Clip clip;
     private JSlider slider = null;
-    private AudioInputStream audioStream;
 
     public Audio(String fileName, File audioFile) {
         this.fileName = fileName;
@@ -133,7 +132,7 @@ public class Audio extends JPanel{
      */
     private void init(){
         try{
-            audioStream = AudioSystem.getAudioInputStream(audioFile);
+            AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
             this.clip = AudioSystem.getClip();
             clip.open(audioStream);
             slider.setMaximum(clip.getFrameLength());
