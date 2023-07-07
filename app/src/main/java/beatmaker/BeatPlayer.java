@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 import java.io.File;
 import java.io.IOException;
 import java.io.SequenceInputStream;
+import java.util.Objects;
 
 import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioFormat;
@@ -34,7 +35,7 @@ public class BeatPlayer extends JPanel{
      */
     public BeatPlayer(){
         libraries = new HashMap<>();
-        for(final File library : libraryFolder.listFiles()){ // explore the directory then add all the audio files in every library
+        for(final File library : Objects.requireNonNull(libraryFolder.listFiles())){ // explore the directory then add all the audio files in every library
             if(library.getName().equals(".DS_Store")) continue;
             Library lib = new Library(library.getName());
             for(final File audioFile : library.listFiles()){

@@ -136,8 +136,6 @@ public class Audio extends JPanel{
             this.clip = AudioSystem.getClip();
             clip.open(audioStream);
             slider.setMaximum(clip.getFrameLength());
-            System.out.println("slider value: " +slider.getMaximum());
-            System.out.println("clip value: " + clip.getFrameLength());
         }catch(UnsupportedAudioFileException audioE){
             System.out.println("Audio Not Supported!");
         }catch(IOException ioE){
@@ -158,5 +156,9 @@ public class Audio extends JPanel{
     public void close(){
         if(clip == null) return;
         if(clip.isOpen()) clip.close();
+    }
+
+    public Clip getClip(){
+        return this.clip;
     }
 }
