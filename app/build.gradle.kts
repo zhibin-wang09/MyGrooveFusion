@@ -22,6 +22,10 @@ dependencies {
 
     // This dependency is used by the application.
     implementation("com.google.guava:guava:31.1-jre")
+
+    // This is a GUI testing dependency
+    implementation("org.assertj:assertj-swing:3.9.2")
+
 }
 
 application {
