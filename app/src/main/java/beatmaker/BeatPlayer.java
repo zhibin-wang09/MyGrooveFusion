@@ -75,8 +75,6 @@ public class BeatPlayer extends JPanel{
         if(inputStream != null) System.out.println("original length: " + (long)(inputStream.getFrameLength()));
         if(shortenedStream!=null) System.out.println("clip length: " + (long) shortenedStream.getFrameLength());
         clips.add(shortenedStream); // add into the list of beats that are going to be concatenated
-
-        System.out.println();
     }
 
     /**

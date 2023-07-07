@@ -22,6 +22,10 @@ public class Library extends JPanel{
         this.name = name;
     }
 
+    public static void notify(String audioFile, long sliderFrame, long framesToCopy){
+        BeatPlayer.copyAudio(audioFile,sliderFrame, framesToCopy);
+    }
+
     public void createPanel(){
         for(Audio a : audios){
             this.add(a);

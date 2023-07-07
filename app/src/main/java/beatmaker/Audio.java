@@ -95,7 +95,7 @@ public class Audio extends JPanel{
                     Please reset the slider so that the clip starts at the slider and hit resume :)
                     """, "alert",JOptionPane.ERROR_MESSAGE);
         }
-        BeatPlayer.copyAudio(audioFile.getPath(),(long)slider.getValue(), clip.getLongFramePosition() - slider.getValue());
+        Library.notify(audioFile.getPath(),(long)slider.getValue(), clip.getLongFramePosition() - slider.getValue());
     }
 
     /**
