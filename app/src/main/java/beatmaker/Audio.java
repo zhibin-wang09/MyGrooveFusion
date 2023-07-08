@@ -130,7 +130,7 @@ public class Audio extends JPanel{
      * constructor is to safe memory as when the clip opens it is loaded into memory. So if it is not needed
      * then it should not be initialized.
      */
-    private void init(){
+    public void init(){
         try{
             AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
             this.clip = AudioSystem.getClip();

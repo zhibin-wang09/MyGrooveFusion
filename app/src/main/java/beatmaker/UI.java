@@ -72,15 +72,18 @@ public class UI {
         JButton clear = new JButton("Clear");
         clear.addActionListener(e -> BeatPlayer.clear());
 
-        JButton upload = new JButton("Upload");
+        JButton upload = new JButton("Upload Your Own .Wav");
 
 
         JButton done = new JButton("Done");
         done.addActionListener(e -> produce());
 
+        JButton share = new JButton("Share");
+
         product.add(clear);
         product.add(upload);
         product.add(done);
+        product.add(share);
         product.add(productName);
         base.add(product);
         rootPane.add(base);
@@ -109,9 +112,7 @@ public class UI {
     private void changeLibraryPanel(JPanel pane){
         Component content = base.getComponent(1);
         if(content instanceof Library){
-            for(Audio a : ((Library) content).getAudios()){
-                a.close(); // close any opened resources if the library is about be to switched.
-            }
+            beatPlayer.cleanUp((Library)content);
         }
         base.remove(1); // remove the content page
         base.add(pane, 1); // Update the content pane with the library pane
@@ -121,7 +122,7 @@ public class UI {
 
     /**
      * This function transfers all the libraries that exists into menu items.
-     * Each item in the menu upon clicked will change the content the the UI to the
+     * Each item in the menu upon clicked will change the content the UI to the
      * audios in that specific library.
      * 
      * @return the menu bar component

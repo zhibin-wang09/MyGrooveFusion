@@ -1,14 +1,11 @@
 package beatmaker;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import javax.swing.JPanel;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.SequenceInputStream;
-import java.util.Objects;
 
 import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioFormat;
@@ -67,10 +64,9 @@ public class BeatPlayer extends JPanel{
             /* get another instance of AudioInputStream */
             inputStream = AudioSystem.getAudioInputStream(file);
             inputStream.skip(startFrame); // skip to the startFrame byte
-            long framesOfAudioToCopy = framesToCopy; // num frames to copy
-            shortenedStream = new AudioInputStream(inputStream, format, framesOfAudioToCopy); // new stream that has the small chunk of beat
+            shortenedStream = new AudioInputStream(inputStream, format, framesToCopy); // new stream that has the small chunk of beat
         } catch (Exception e) {
-            System.out.println(e.getStackTrace());
+            System.out.println(Arrays.toString(e.getStackTrace()));
         }
 
         if(inputStream != null) System.out.println("original length: " + (long)(inputStream.getFrameLength()));
@@ -98,11 +94,12 @@ public class BeatPlayer extends JPanel{
             }
             prev = new AudioInputStream(new SequenceInputStream(prev, clip),prev.getFormat(),prev.getFrameLength() + clip.getFrameLength());
         }
+        if(prev == null) return false;
         try{
             AudioSystem.write(prev, AudioFileFormat.Type.WAVE, new File(destination)); // create new file of the final product beat
             return true;
         }catch(IOException e){
-            System.out.println(e);
+            System.out.println(Arrays.toString(e.getStackTrace()));
             return false;
         }
     }
@@ -117,5 +114,9 @@ public class BeatPlayer extends JPanel{
             listOfLib.add(e.getValue());
         }
         return listOfLib;
+    }
+
+    public void cleanUp(Library lib){
+        lib.closeAll();
     }
 }

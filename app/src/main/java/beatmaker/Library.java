@@ -55,4 +55,10 @@ public class Library extends JPanel{
     public String getName(){
         return this.name;
     }
+
+    public void closeAll() {
+        for (Audio a : audios) {
+            a.close();
+        }
+    }
 }
