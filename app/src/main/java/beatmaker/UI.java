@@ -1,4 +1,9 @@
 package beatmaker;
+import com.google.common.io.ByteStreams;
+
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -17,6 +22,7 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.*;
 
 /**
  * A class to manipulate the UI for the beat maker application
@@ -26,6 +32,8 @@ public class UI {
     private final BeatPlayer beatPlayer; // the music player that the program will be interacting with
     private final Container rootPane;
     private JPanel base;
+
+    private final String APIEndpoint = "http://localhost:8080/api/v1/mixed_audios";
     
     /**
      * This constructor sets the default setting of the <code>frame</code>
@@ -72,16 +80,14 @@ public class UI {
         JButton clear = new JButton("Clear");
         clear.addActionListener(e -> BeatPlayer.clear());
 
-        JButton upload = new JButton("Upload Your Own .Wav");
-
 
         JButton done = new JButton("Done");
         done.addActionListener(e -> produce());
 
         JButton share = new JButton("Share");
+        share.addActionListener(e -> share());
 
         product.add(clear);
-        product.add(upload);
         product.add(done);
         product.add(share);
         product.add(productName);
@@ -150,6 +156,36 @@ public class UI {
             boolean status = BeatPlayer.joinClips(fileChooser.getSelectedFile().getAbsolutePath());
             if(status){
                 JOptionPane.showMessageDialog(null,"The file has been added successfully!");
+            }
+        }
+    }
+
+    public void share(){
+        JFileChooser fileChooser = new JFileChooser("./app/src/main/resources/production");
+        fileChooser.setFileFilter(new FileNameExtensionFilter("WAVE FILES","wav"));
+        int response = fileChooser.showOpenDialog(null);
+        if(response == JFileChooser.APPROVE_OPTION){
+            File selected = fileChooser.getSelectedFile();
+            String filename = selected.getName();
+            int dotIndex = filename.lastIndexOf('.');
+            if(!filename.substring(dotIndex+1).equals(".wav")){
+                JOptionPane.showMessageDialog(null, "The file should be an .wav file!");
+            }
+            try(InputStream stream = new FileInputStream(selected)){
+                AudioInputStream audioStream = AudioSystem.getAudioInputStream(stream);
+                byte[] buffer = new byte[4096];
+                int byteRead;
+                ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+                while((byteRead = audioStream.read(buffer)) != -1){
+                    byteStream.write(buffer,0,byteRead);
+                }
+                Service.sendData(APIEndpoint, byteStream.toByteArray());
+            }catch(FileNotFoundException e){
+                JOptionPane.showMessageDialog(null, "The file is not found!");
+            }catch(IOException ioE){
+                JOptionPane.showMessageDialog(null, "Can not read the content of the file!");
+            }catch(UnsupportedAudioFileException unsupportedE){
+                JOptionPane.showMessageDialog(null, "Not a valid audio file!");
             }
         }
     }
