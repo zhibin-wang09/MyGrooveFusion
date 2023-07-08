@@ -26,6 +26,9 @@ dependencies {
     // This is a GUI testing dependency
     implementation("org.assertj:assertj-swing:3.9.2")
 
+    // Apache HTTP methods
+    implementation("org.apache.httpcomponents.client5:httpclient5:5.2.1")
+
 }
 
 application {
