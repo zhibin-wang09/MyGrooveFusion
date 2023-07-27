@@ -1,33 +1,42 @@
 package beatmaker;
 
-import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.HttpClients;
-import org.apache.hc.core5.http.ClassicHttpRequest;
-import org.apache.hc.core5.http.ContentType;
-import org.apache.hc.core5.http.HttpEntity;
-import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
-import org.apache.hc.core5.http.io.entity.EntityUtils;
-import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
-
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandlers;
+
+import org.apache.hc.client5.http.utils.Base64;
+
+import java.net.http.HttpClient;
+
+
 
 public class Service {
 
-    public static <T> void sendData(String endpoint, T data){
-        try(CloseableHttpClient httpClient  = HttpClients.createDefault()){
-            byte[] binaryData = (byte[]) data;
-            ClassicHttpRequest httpPost = ClassicRequestBuilder.post(endpoint)
-                    .setEntity(new ByteArrayEntity(binaryData, ContentType.APPLICATION_OCTET_STREAM))
-                    .build();
-            httpClient.execute(httpPost, response -> {
-                System.out.println(response.getCode() + " " + response.getReasonPhrase());
+    public static boolean sendRequest(String name, byte[] data){
+        try {
+            String base64encode = Base64.encodeBase64String(data);
+            String body = String.format("{\"producerName\": \"%s\", \"data\": \"%s\"}", name, base64encode);
+            HttpRequest request = HttpRequest.newBuilder()
+            .uri(new URI("http://localhost:8080/api/v1/mixed_audios"))
+            .headers("Content-Type", "application/json")
+            .POST(HttpRequest.BodyPublishers.ofString(body))
+            .build();
 
-                final HttpEntity entity2 = response.getEntity();
-                EntityUtils.consume(entity2);
-                return null;
-            });
-        } catch (IOException e) {
+            HttpResponse<String> response = HttpClient.newBuilder().build().send(request,BodyHandlers.ofString());
+            System.out.println(response);
+            return true;
+        } catch (URISyntaxException e) {
             throw new RuntimeException(e);
+        }catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
+        return false;
     }
 }

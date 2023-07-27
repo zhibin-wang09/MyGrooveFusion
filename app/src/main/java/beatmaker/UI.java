@@ -1,5 +1,4 @@
 package beatmaker;
-import com.google.common.io.ByteStreams;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -33,8 +32,6 @@ public class UI {
     private final Container rootPane;
     private JPanel base;
 
-    private final String APIEndpoint = "http://localhost:8080/api/v1/mixed_audios";
-    
     /**
      * This constructor sets the default setting of the <code>frame</code>
     */
@@ -168,21 +165,24 @@ public class UI {
             File selected = fileChooser.getSelectedFile();
             String filename = selected.getName();
             int dotIndex = filename.lastIndexOf('.');
-            if(!filename.substring(dotIndex+1).equals(".wav")){
+            if(!filename.substring(dotIndex+1).equals("wav")){
                 JOptionPane.showMessageDialog(null, "The file should be an .wav file!");
+                return;
             }
-            try(InputStream stream = new FileInputStream(selected)){
-                AudioInputStream audioStream = AudioSystem.getAudioInputStream(stream);
+            String producerName = JOptionPane.showInputDialog(null, "Enter your producer name");
+            try{
+                AudioInputStream audioStream = AudioSystem.getAudioInputStream(selected);
                 byte[] buffer = new byte[4096];
                 int byteRead;
                 ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
                 while((byteRead = audioStream.read(buffer)) != -1){
                     byteStream.write(buffer,0,byteRead);
                 }
-                Service.sendData(APIEndpoint, byteStream.toByteArray());
+                Service.sendRequest(producerName, byteStream.toByteArray());
             }catch(FileNotFoundException e){
                 JOptionPane.showMessageDialog(null, "The file is not found!");
             }catch(IOException ioE){
+                System.out.println(ioE);
                 JOptionPane.showMessageDialog(null, "Can not read the content of the file!");
             }catch(UnsupportedAudioFileException unsupportedE){
                 JOptionPane.showMessageDialog(null, "Not a valid audio file!");
