@@ -76,7 +76,7 @@ public class UI {
         JPanel product = new JPanel();
         JLabel productName = new JLabel("Production Beat");
         JButton clear = new JButton("Clear");
-        clear.addActionListener(e -> mixer.clear());
+        clear.addActionListener(e -> BeatMixer.clear());
 
 
         JButton done = new JButton("Done");
@@ -151,7 +151,7 @@ public class UI {
         fileChooser.setFileFilter(new FileNameExtensionFilter("WAVE FILES", "wav", "wave"));
         int response = fileChooser.showSaveDialog(null);
         if(response == JFileChooser.APPROVE_OPTION){
-            boolean status = mixer.joinClips(fileChooser.getSelectedFile().getAbsolutePath());
+            boolean status = BeatMixer.joinClips(fileChooser.getSelectedFile().getAbsolutePath());
             if(status){
                 JOptionPane.showMessageDialog(null,"The file has been added successfully!");
             }
