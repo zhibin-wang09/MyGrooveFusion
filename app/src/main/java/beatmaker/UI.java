@@ -28,14 +28,15 @@ import java.io.*;
 */
 public class UI {
     private final JFrame frame; // the base frame that the program uses
-    private final BeatPlayer beatPlayer; // the music player that the program will be interacting with
+    private final BeatMixer mixer; // the music player that the program will be interacting with
     private final Container rootPane;
     private JPanel base;
+    private static UI instance = new UI();
 
     /**
      * This constructor sets the default setting of the <code>frame</code>
     */
-    public UI(){
+    private UI(){
         frame = new JFrame("Groove Fusion");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE); // change default behavior to exit on close
         frame.setResizable(false);
@@ -43,7 +44,7 @@ public class UI {
         frame.setLocationRelativeTo(null);
         frame.setIconImage(new ImageIcon("./app/src/main/resources/images/beats.png").getImage());
         rootPane = frame.getContentPane();
-        beatPlayer = new BeatPlayer();
+        mixer = new BeatMixer();
     }
 
     /**
@@ -57,7 +58,7 @@ public class UI {
 
     /**
      * This function generate the list of panels for each audio that 
-     * exist in <code>beatPlayer</code>'s list of audios. Use the list to
+     * exist in <code>mixer</code>'s list of audios. Use the list to
      * add the panels into the frame.
     */
     private void addPanels(){
@@ -75,7 +76,7 @@ public class UI {
         JPanel product = new JPanel();
         JLabel productName = new JLabel("Production Beat");
         JButton clear = new JButton("Clear");
-        clear.addActionListener(e -> BeatPlayer.clear());
+        clear.addActionListener(e -> mixer.clear());
 
 
         JButton done = new JButton("Done");
@@ -115,7 +116,7 @@ public class UI {
     private void changeLibraryPanel(JPanel pane){
         Component content = base.getComponent(1);
         if(content instanceof Library){
-            beatPlayer.cleanUp((Library)content);
+            mixer.cleanUp((Library)content);
         }
         base.remove(1); // remove the content page
         base.add(pane, 1); // Update the content pane with the library pane
@@ -130,10 +131,10 @@ public class UI {
      * 
      * @return the menu bar component
      */
-    public JMenuBar initMenu(){
+    private JMenuBar initMenu(){
         JMenuBar menuBar = new JMenuBar();
         JMenu librarySelection = new JMenu("Library");
-        for(Library lib : beatPlayer.getLibraries()){
+        for(Library lib : mixer.getLibraries()){
             JMenuItem item = new JMenuItem(lib.getName());
             item.addActionListener(new MenuAction(lib));
             librarySelection.add(item);
@@ -145,19 +146,19 @@ public class UI {
     /**
      * This function will prompt the user to choose the name of the production .wav file name and save location
      */
-    public void produce(){
+    private void produce(){
         JFileChooser fileChooser = new JFileChooser("./app/src/main/resources/production");
         fileChooser.setFileFilter(new FileNameExtensionFilter("WAVE FILES", "wav", "wave"));
         int response = fileChooser.showSaveDialog(null);
         if(response == JFileChooser.APPROVE_OPTION){
-            boolean status = BeatPlayer.joinClips(fileChooser.getSelectedFile().getAbsolutePath());
+            boolean status = mixer.joinClips(fileChooser.getSelectedFile().getAbsolutePath());
             if(status){
                 JOptionPane.showMessageDialog(null,"The file has been added successfully!");
             }
         }
     }
 
-    public void share(){
+    private void share(){
         JFileChooser fileChooser = new JFileChooser("./app/src/main/resources/production");
         fileChooser.setFileFilter(new FileNameExtensionFilter("WAVE FILES","wav"));
         int response = fileChooser.showOpenDialog(null);
@@ -193,7 +194,7 @@ public class UI {
     /**
      * This function will display a guide upon opening the program
      */
-    public void showGuide(){
+    private void showGuide(){
         /* <a href="https://www.flaticon.com/free-icons/midi" title="midi icons">Midi icons created by Freepik - Flaticon</a> */
         JOptionPane.showMessageDialog(null, 
          """
@@ -212,5 +213,9 @@ public class UI {
             You can always come back to this panel for information. \n.
             HAVE FUN MESSING AROUND!.\n
          """, "Brief Guide" ,JOptionPane.INFORMATION_MESSAGE, new ImageIcon("./app/src/main/resources/images/midi.png"));
+    }
+
+    public static UI getInstance(){
+        return instance;
     }
 }

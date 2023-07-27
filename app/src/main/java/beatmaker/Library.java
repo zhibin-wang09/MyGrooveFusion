@@ -23,7 +23,7 @@ public class Library extends JPanel{
     }
 
     public static void notify(String audioFile, long sliderFrame, long framesToCopy){
-        BeatPlayer.copyAudio(audioFile,sliderFrame, framesToCopy);
+        BeatMixer.copyAudio(audioFile,sliderFrame, framesToCopy);
     }
 
     public void createPanel(){

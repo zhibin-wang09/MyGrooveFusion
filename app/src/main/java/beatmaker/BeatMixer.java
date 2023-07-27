@@ -15,7 +15,7 @@ import javax.sound.sampled.AudioSystem;
 /**
  * A class that stores all the audios and manipulate these audios
  */
-public class BeatPlayer extends JPanel{
+public class BeatMixer extends JPanel{
 
     private final HashMap<String, Library> libraries; // stores all the libraries
     final File libraryFolder = new File("./app/src/main/resources/audios"); // open the directory of audio files
@@ -30,7 +30,7 @@ public class BeatPlayer extends JPanel{
      * Visit the directory that holds all the audio files then convert them into a 
      * Audio object and store them into a list.
      */
-    public BeatPlayer(){
+    public BeatMixer(){
         libraries = new HashMap<>();
         for(final File library : Objects.requireNonNull(libraryFolder.listFiles())){ // explore the directory then add all the audio files in every library
             if(library.getName().equals(".DS_Store")) continue;
